@@ -1,0 +1,93 @@
+name: Build-Scan-Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Needed to commit the updated VERSION file
+    env:
+      IMAGE_NAME: ivolve_project
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: List repository contents
+        run: ls -la  
+#   Reads current version from VERSION file
+#   Version format must be: v[number] (e.g., v1)
+#   If VERSION file is missing, the workflow will fail at this step.
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "current=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version is: $VERSION"
+#   Increments version by 1 (v5 → v6)
+      - name: Increment version
+        id: bump
+        run: |
+          CURRENT=${{ steps.version.outputs.current }}
+          NUM=${CURRENT#v}
+          NEXT=$((NUM + 1))
+          NEW="v$NEXT"
+
+          echo "$NEW" > VERSION
+          echo "next=$NEW" >> $GITHUB_OUTPUT
+          echo "Next version will be: $NEW"
+#   Commits new version back to repository
+      - name: Commit updated VERSION
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add VERSION
+          git commit -m "Auto bump version to ${{ steps.bump.outputs.next }}"
+          git push
+# Update the image name and tag in the deploymnet.yaml
+# print the file content to make sure it's updated
+      - name: Update Kubernetes manifests
+        run: |
+          echo "📝 Updating Kubernetes manifests with new image version..."
+          sed -i "s|image: ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:.*|image: ${{ secrets.DOCKERHUB_USER }}/myapp:${{ steps.version.outputs.current }}|g" deployment.yaml
+          echo "✅ Updated deployment.yaml"
+          cat deployment.yaml | grep "image:"
+
+      - name: Commit updated Kubernetes manifests
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add deployment.yaml
+          git commit -m "Update Kubernetes deployment to version ${{ steps.version.outputs.current }}"
+          git push
+# Create secrets in github to use it to log in dockerhub          
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#   Builds Docker image with version tag + 'latest' tag
+      - name: Build docker image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:${{ steps.bump.outputs.next }} \
+          -t ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:latest .
+              
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }}
+          format: table
+          ignore-unfixed: true
+#   Pushes both tags to Docker Hub
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }}
+          docker push ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:latest
+#   Cleans up local images
+      - name: Delete local images
+        run: |
+          docker rmi ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }} || true
+          docker rmi ${{ secrets.DOCKERHUB_USER }}/${{ env.IMAGE_NAME }}:latest || true
