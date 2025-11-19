@@ -115,5 +115,5 @@ jobs:
         if: success()
         run: |
          curl -s -X POST https://api.telegram.org/bot8387769801:AAE5j1gGOZAqJIOtkYEqp17i40z07QiZpSo/sendMessage \
-         -d chat_id=207481062 \
+         -d chat_id=1296606217 \
          -d text="🎉 GitHub Action succeeded! Version: ${{ steps.version.outputs.current }}"
