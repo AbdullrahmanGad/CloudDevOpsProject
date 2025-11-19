@@ -81,8 +81,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t $ECR_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }} \
-                       -t $ECR_REGISTRY/${{ env.IMAGE_NAME }}:latest .
+          docker build -f app/Dockerfile -t $ECR_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }} \
+                 -t $ECR_REGISTRY/${{ env.IMAGE_NAME }}:latest app/
           echo "✅ Built image: $ECR_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }}"
       
       - name: Scan image with Trivy
