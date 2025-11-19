@@ -54,15 +54,15 @@ jobs:
       - name: Update Kubernetes manifests
         run: |
           echo "📝 Updating Kubernetes manifests with new image version..."
-          sed -i "s|image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:.*|image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }}|g" deployment.yaml
+          sed -i "s|image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:.*|image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }}|g" kubernets_manifests/deployment.yaml
           echo "✅ Updated deployment.yaml"
-          cat deployment.yaml | grep "image:"
+          cat kubernets_manifests/deployment.yaml | grep "image:"
       
       - name: Commit updated Kubernetes manifests
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add deployment.yaml
+          git add kubernets_manifests/deployment.yaml
           git commit -m "Update Kubernetes deployment to version ${{ steps.version.outputs.current }}"
           git push
 # Create secrets in github to use it to use with AWS              
