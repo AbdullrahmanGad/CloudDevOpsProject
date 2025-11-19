@@ -109,3 +109,11 @@ jobs:
           docker rmi $ECR_REGISTRY/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.current }} || true
           docker rmi $ECR_REGISTRY/${{ env.IMAGE_NAME }}:latest || true
           echo "✅ Cleaned up local images"
+# Notify on pipeline success using telegram bot
+#easy and fun to setup.
+      - name: Notify Telegram on success
+        if: success()
+        run: |
+         curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+         -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+         -d text="🎉 GitHub Action succeeded! Version: ${{ steps.version.outputs.current }}"
