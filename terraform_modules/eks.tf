@@ -14,9 +14,27 @@ module "eks" {
   enable_irsa = true
 
   # Cluster endpoint access
-  # Public isn't supposed to be reachable so the default will be false
-  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
+  cluster_endpoint_public_access  = true  # ✅ Enable public access
   cluster_endpoint_private_access = true
+
+  # ✅ NEW WAY: Configure cluster access via access entries
+  enable_cluster_creator_admin_permissions = true
+  
+  # Add additional IAM users/roles
+  access_entries = {
+    gad = {
+      principal_arn = "arn:aws:iam::888577018454:user/gad"
+      
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
 
   # EKS Managed Node Group
   eks_managed_node_groups = {
@@ -67,4 +85,3 @@ module "eks" {
     ManagedBy   = "Terraform"
   }
 }
-

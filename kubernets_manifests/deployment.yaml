@@ -14,9 +14,11 @@ spec:
       labels:
         app: ivolve-project
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
       - name: ivolve-project
-        image: 888577018454.dkr.ecr.us-east-1.amazonaws.com/ivolve-project:v3
+        image: 888577018454.dkr.ecr.us-east-1.amazonaws.com/ivolve-project:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 5000

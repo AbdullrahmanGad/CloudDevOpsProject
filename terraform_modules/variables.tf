@@ -45,7 +45,7 @@ variable "cluster_version" {
 variable "cluster_endpoint_public_access" {
   description = "Enable public access to cluster endpoint"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "node_instance_types" {
