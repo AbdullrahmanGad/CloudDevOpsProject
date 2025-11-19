@@ -18,7 +18,7 @@ spec:
         - name: ecr-secret
       containers:
       - name: ivolve-project
-        image: 888577018454.dkr.ecr.us-east-1.amazonaws.com/ivolve-project:v2
+        image: 888577018454.dkr.ecr.us-east-1.amazonaws.com/ivolve-project:v3
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
