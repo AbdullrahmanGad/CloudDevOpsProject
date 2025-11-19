@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ivolve-project
+  labels:
+    app: ivolve-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ivolve-project
+  template:
+    metadata:
+      labels:
+        app: ivolve-project
+    spec:
+      containers:
+      - name: ivolve-project
+        image: 888577018454.dkr.ecr.us-east-1.amazonaws.com/ivolve-project:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        env:
+        - name: FLASK_ENV
+          value: "production"
+        - name: PORT
+          value: "5000"
