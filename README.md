@@ -156,7 +156,7 @@ The GitHub Actions pipeline automatically:
 
 ### 8. Deploy ArgoCD
 
-Install ArgoCD in your EKS cluster:
+**ArgoCD Complete setup and configuration in my EKS, [Click Here](argocd_manifests/README.md)**
 
 ### 9. Configure ArgoCD Application
 
