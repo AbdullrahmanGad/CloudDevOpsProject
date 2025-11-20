@@ -70,10 +70,13 @@ Create deployment and service manifests in `kubernetes-manifests/`:
 
 - `deployment.yaml`
   ![8654](https://github.com/user-attachments/assets/2d4478e6-99d2-42ef-8b63-8f1baa0f4416)
+  
 - `service.yaml`
+
   <img width="531" height="383" alt="image" src="https://github.com/user-attachments/assets/6576112c-ba0f-4a83-8844-d8787e20b66e" />
 
 - `namespace.yaml`
+
   <img width="496" height="221" alt="image" src="https://github.com/user-attachments/assets/b4702a0a-495c-40fe-8198-fd133697bfb5" />
 
 ### 4. Infrastructure Provisioning with Terraform
