@@ -168,11 +168,16 @@ kubectl apply -f argocd-service-lb.yaml
 ```
 
 - Create an ArgoCD application pointing to your kubernetes-manifests:
-  ![argocd12](https://github.com/user-attachments/assets/ef631ef4-6b13-417e-a192-da125c5b940d)
+  ![31](https://github.com/user-attachments/assets/5ee8d9a5-0268-4c22-97b2-6a62013136fd)
 - ECR secrets:
   ![argocd14](https://github.com/user-attachments/assets/02d38625-3f56-4c65-a3dd-4588cfa98bde)
 - LoadBalancer Service:
   ![link](https://github.com/user-attachments/assets/a1b2853a-587d-42ce-97b2-8f56a0577d9a)
+- Verify The deployment Through UI.
+  ![argocd15](https://github.com/user-attachments/assets/ebfc1d0e-4047-442c-aa39-2cb0551557c2)
+  ![argocd16](https://github.com/user-attachments/assets/b76b2d31-6b46-4f54-9fea-ef4057a07d3d)
+
+
 
 ### Monitoring & Verification
 
